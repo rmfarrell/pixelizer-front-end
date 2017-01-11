@@ -37,7 +37,6 @@
       :options="secondaryOptions",
       :orientation="orientation"
     )
-
 </template>
 
 <script>
