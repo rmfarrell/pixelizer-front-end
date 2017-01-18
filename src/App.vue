@@ -19,13 +19,19 @@
             input(type="radio" v-model="renderAlgorithm" value="circles")
             label Circles
           li
-            input(type="radio" v-model="renderAlgorithm" value="triangle")
+            input(type="radio" v-model="renderAlgorithm" value="triangles")
             label Triangles
         ul#secondary
-          li(v-if="renderAlgorithm === 'circles'")
+          li(v-if="['circles'].includes(renderAlgorithm)")
             input(
               type="number",
               v-model="secondaryOptions.unitSize",
+              @change="emitInputUpdated"
+            )
+          li(v-if="['triangles', 'circles', 'squares'].includes(renderAlgorithm)")
+            input(
+              type="number",
+              v-model="secondaryOptions.funkiness",
               @change="emitInputUpdated"
             )
 
@@ -47,15 +53,16 @@
     data () {
       return {
         orientation: 'landscape',
-        renderAlgorithm: 'circles',
+        renderAlgorithm: 'squares',
         ctx: null,
-        width: 50,
+        width: 60,
         height: 0,
         ratio: 0,
         img: new window.Image(),
         imageData: [],
         secondaryOptions: {
-          unitSize: 1
+          unitSize: 1,
+          funkiness: 0
         }
       }
     },
