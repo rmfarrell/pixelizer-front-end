@@ -1,31 +1,23 @@
 <template lang="pug">
-div#renderer(:class="orientation")
+div#renderer(:class="orientation", style="display: none")
   canvas(:height="height * pxDensity", :width="width * pxDensity")
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'PixelField',
   props: {
-    orientation: {
-      type: String,
-      required: false,
-      default: 'landscape'
-    },
     renderAlgorithm: {
       type: String,
       required: true
     },
-    height: {
-      type: Number,
-      required: true
-    },
-    width: {
-      type: Number,
-      required: true
-    },
     imageData: {
       type: Array,
+      required: true
+    },
+    pxDensity: {
+      type: Number,
       required: true
     },
     options: {
@@ -40,7 +32,6 @@ export default {
   data () {
     return {
       ctx: null,
-      pxDensity: 100,
       canvas: null
     }
   },
@@ -120,7 +111,16 @@ export default {
     this.ctx = this.canvas.getContext('2d')
     this.$bus.$on('input-updated', () => {
       this.$nextTick(this.draw)
+      this.$bus.$emit('canvas-drawn', 1, this.canvas)
     })
+  },
+  computed: {
+    ...mapGetters([
+      'height',
+      'width',
+      'ratio',
+      'orientation'
+    ])
   }
 }
 </script>
