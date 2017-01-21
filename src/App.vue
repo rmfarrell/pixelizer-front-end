@@ -19,48 +19,61 @@
             input(type="radio" v-model="renderAlgorithm" value="circles")
             label Circles
           li
-            input(type="radio" v-model="renderAlgorithm" value="triangle")
+            input(type="radio" v-model="renderAlgorithm" value="triangles")
             label Triangles
         ul#secondary
-          li(v-if="renderAlgorithm === 'circles'")
+          li(v-if="['circles'].includes(renderAlgorithm)")
             input(
               type="number",
               v-model="secondaryOptions.unitSize",
               @change="emitInputUpdated"
             )
+          li(v-if="['triangles', 'circles', 'squares'].includes(renderAlgorithm)")
+            input(
+              type="number",
+              v-model="secondaryOptions.funkiness",
+              @change="emitInputUpdated"
+            )
+
+    #rendered-container
+      canvas.rendered(v-for="r in frameCount")
 
     pixel-field(
       :render-algorithm="renderAlgorithm",
-      :height="height",
-      :width="width",
       :image-data="imageData",
       :options="secondaryOptions",
-      :orientation="orientation"
+      :px-density="pxDensity"
     )
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import pixelField from './components/PixelField'
 
   export default {
     name: 'app',
     data () {
       return {
-        orientation: 'landscape',
-        renderAlgorithm: 'circles',
+        renderAlgorithm: 'squares',
         ctx: null,
-        width: 50,
-        height: 0,
-        ratio: 0,
+        pxDensity: 100,
         img: new window.Image(),
         imageData: [],
+        frameCount: 1,
         secondaryOptions: {
-          unitSize: 1
+          unitSize: 1,
+          funkiness: 0
         }
       }
     },
     mounted () {
+      // Set the ctx on the input canvas
       this.ctx = document.getElementById('input-canvas').getContext('2d')
+
+      // listen for canvas drawn and update the rendered cavnas with a snapshot
+      this.$bus.$on('canvas-drawn', (idx, context) => {
+        this.copyContext(idx, context)
+      })
     },
     watch: {
       renderAlgorithm () {
@@ -68,40 +81,46 @@
       }
     },
     methods: {
+      copyContext (idx, src) {
+        let w = 200
+        let canvas = this.findRenderedCanvas(idx)
+        let newCtx = canvas.getContext('2d')
+        canvas.width = w
+        canvas.height = w * this.$store.ratio
+        newCtx.drawImage(src, 0, 0)
+      },
+      findRenderedCanvas (idx) {
+        return this.$el.querySelector('#rendered-container').children[idx - 1]
+      },
       fileUploaded (val) {
         this.img.onload = () => {
           this.setRatio()
-          this.setOrientation()
           this.updateInput()
         }
         this.img.src = window.URL.createObjectURL(val.target.files[0])
       },
       updateInput () {
-        this.setResolution()
         this.$nextTick(this.placeImage)
         this.$nextTick(this.sample)
         this.$nextTick(() => this.$bus.$emit('input-updated'))
       },
       setRatio () {
-        this.ratio = this.img.naturalHeight / this.img.naturalWidth
-      },
-      setOrientation () {
-        this.orientation = (this.ratio > 1) ? 'portrait' : 'landscape'
-      },
-      setResolution () {
-        this.height = Math.round(this.width * this.ratio)
+        this.$store.commit(
+          'setRatio',
+          this.img.naturalHeight / this.img.naturalWidth
+        )
       },
       placeImage () {
-        this.ctx.drawImage(this.img, 0, 0, this.width, this.height)
+        this.ctx.drawImage(this.img, 0, 0, this.width(), this.height())
       },
       emitInputUpdated () {
         this.$bus.$emit('input-updated')
       },
       sample () {
-        if (this.width === 0 || this.height === 0) {
+        if (this.width() === 0 || this.height() === 0) {
           return
         }
-        let imageData = this.ctx.getImageData(0, 0, this.width, this.height)
+        let imageData = this.ctx.getImageData(0, 0, this.$store.width, this.$store.height)
         let dat = imageData.data
         let out = []
         let counter = 0
@@ -111,6 +130,14 @@
         }
         this.imageData = out
       }
+    },
+    computed: {
+      ...mapGetters([
+        'height',
+        'width',
+        'ratio',
+        'orientation'
+      ])
     },
     components: {
       pixelField
