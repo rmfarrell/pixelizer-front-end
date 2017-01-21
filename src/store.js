@@ -1,4 +1,4 @@
-export default {
+const Store = {
   state: {
     width: 60,
     height: 0,
@@ -6,25 +6,27 @@ export default {
     orientation: 'landscape'
   },
   mutations: {
-    setRatio (ratio) {
-      this.ratio = ratio
-      this.orientation = (this.ratio() > 1) ? 'portrait' : 'landscape'
-      this.height = Math.round(this.width * this.ratio)
+    setRatio (state, ratio) {
+      state.ratio = ratio
+      state.orientation = (ratio > 1) ? 'portrait' : 'landscape'
+      state.height = Math.round(state.width * state.ratio)
     }
   },
   getters: {
-    height () {
-      return this.height
+    height: state => {
+      return state.height
     },
-    width () {
-      return this.width
+    width: state => {
+      return state.width
     },
-    ratio () {
-      return this.ratio
+    ratio: state => {
+      return state.ratio
     },
-    orientation () {
-      return this.orientation
+    orientation: state => {
+      return state.orientation
     }
   },
   actions: {}
 }
+
+export default Store

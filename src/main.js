@@ -5,6 +5,7 @@ import Vuex from 'vuex'
 import App from './App'
 import storeData from './store'
 import './assets/styles/master.sss'
+
 Vue.use(Vuex)
 const bus = new Vue()
 Vue.prototype.$bus = bus

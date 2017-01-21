@@ -44,6 +44,7 @@
       :options="secondaryOptions",
       :px-density="pxDensity"
     )
+    div
 </template>
 
 <script>
@@ -111,16 +112,16 @@
         )
       },
       placeImage () {
-        this.ctx.drawImage(this.img, 0, 0, this.width(), this.height())
+        this.ctx.drawImage(this.img, 0, 0, this.width, this.height)
       },
       emitInputUpdated () {
         this.$bus.$emit('input-updated')
       },
       sample () {
-        if (this.width() === 0 || this.height() === 0) {
+        if (this.width === 0 || this.height === 0) {
           return
         }
-        let imageData = this.ctx.getImageData(0, 0, this.$store.width, this.$store.height)
+        let imageData = this.ctx.getImageData(0, 0, this.width, this.height)
         let dat = imageData.data
         let out = []
         let counter = 0
