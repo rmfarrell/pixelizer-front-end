@@ -1,5 +1,3 @@
-const maxFrames = 10
-
 const Store = {
   state: {
     width: 60,
@@ -28,7 +26,7 @@ const Store = {
       state.renderWidth = state.width * state.pxDensity
     },
     addFrame (state) {
-      state.frameCount = Math.min(maxFrames, state.frameCount + 1)
+      state.frameCount = Math.min(window.Globals.maxFrames, state.frameCount + 1)
     },
     goToFrame (state, frameNum) {
       state.currentFrame = (frameNum <= state.frameCount) ? frameNum : 1

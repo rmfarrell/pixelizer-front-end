@@ -6,6 +6,11 @@ import App from './App'
 import storeData from './store'
 import './assets/styles/master.sss'
 
+// Globals
+window.Globals = {
+  maxFrames: 10
+}
+
 Vue.use(Vuex)
 const bus = new Vue()
 Vue.prototype.$bus = bus

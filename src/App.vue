@@ -12,8 +12,6 @@
           p {{orientation}}
 
       form#algorithm-selector
-        p: a(@click="addFrame()") +++++++New Frame+++++++
-        p: a(@click="nextFrame()")  ->-->-->Next Frame-->-->-->
         ul#primary
           li
             input(type="radio" v-model="renderAlgorithm" value="squares")
@@ -39,7 +37,10 @@
             )
 
     #thumbnails
-      render(v-for="r in frameCount", :index="r")
+      a: render(v-for="r in frameCount", :index="r")
+      a(v-if="isNextButton", @click="createFrame()")
+        em +
+        | New Frame
 
     #stage
       render(v-for="r in frameCount", :index="r", v-show="r === currentFrame")
@@ -65,6 +66,7 @@
         ctx: null,
         img: new window.Image(),
         imageData: [],
+        isNextButton: true,
         secondaryOptions: {
           unitSize: 1,
           funkiness: 0
@@ -81,20 +83,17 @@
       }
     },
     methods: {
+      createFrame () {
+        this.$store.commit('addFrame')
+        this.goToFrame(this.currentFrame + 1)
+        this.updateInput()
+      },
       updateWidth (val) {
         this.$store.commit('setWidth', val.target.value)
         this.updateInput()
-        // this.emitInputUpdated()
       },
       goToFrame (frame) {
-        console.log('gotoframe')
         this.$store.commit('goToFrame', frame)
-      },
-      addFrame () {
-        this.$store.commit('addFrame')
-      },
-      nextFrame () {
-        this.$store.commit('goToFrame', this.currentFrame + 1)
       },
       fileUploaded (val) {
         this.img.onload = () => {
@@ -144,6 +143,9 @@
         'frameCount',
         'currentFrame'
       ])
+    },
+    isNextButton () {
+      return (this.frameCount < this.Globals.maxFrames)
     },
     components: {
       pixelField,
