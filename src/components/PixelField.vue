@@ -1,6 +1,5 @@
 <template lang="pug">
-div#renderer(:class="orientation", style="display: none")
-  canvas(:height="height * pxDensity", :width="width * pxDensity")
+div
 </template>
 
 <script>
@@ -14,10 +13,6 @@ export default {
     },
     imageData: {
       type: Array,
-      required: true
-    },
-    pxDensity: {
-      type: Number,
       required: true
     },
     options: {
@@ -107,19 +102,24 @@ export default {
     }
   },
   mounted () {
-    this.canvas = this.$el.querySelector('canvas')
+    this.canvas = document.createElement('canvas')
     this.ctx = this.canvas.getContext('2d')
     this.$bus.$on('input-updated', () => {
+      this.canvas.height = this.renderHeight
+      this.canvas.width = this.renderWidth
       this.$nextTick(this.draw)
-      this.$bus.$emit('canvas-drawn', 1, this.canvas)
+      this.$nextTick(() => {
+        this.$bus.$emit('canvas-drawn', this.canvas)
+      })
     })
   },
   computed: {
     ...mapGetters([
       'height',
       'width',
-      'ratio',
-      'orientation'
+      'renderHeight',
+      'renderWidth',
+      'pxDensity'
     ])
   }
 }

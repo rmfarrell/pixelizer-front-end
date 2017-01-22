@@ -15,25 +15,57 @@ body,html
   box-shadow: inset 0 1em 6em 0 rgba(0,0,0,0.5)
   width: 100%
 
-#renderer
+.render-container
   position: absolute
   top: 0
   height: 100%
   width: 100%
   box-shadow: inset 0 0 100px 0px rgba(0,0,0,0.5)
 
-#renderer canvas
+.render-container canvas
   position: absolute
-  /*background-color: white
-  border: .2em solid white*/
 
-#renderer.landscape canvas
+.render-container.landscape
+  width: 8%
+  margin: 1%
+  top: 2%
+
+#stage .render-container
+  width: 100%
+
+#stage .render-container.landscape canvas
   width: 100%
   top: 50%
   transform: translateY(-50%)
+  width: auto
 
-#renderer.portrait canvas
+#stage .render-container.portrait canvas
   height: 100vh
   left: 50%
   transform: translateX(-50%)
   top: 0
+  width: auto
+
+#thumbnails
+  position: relative
+  background-color: rgba(0,0,0,.5)
+  padding: 2em 0 .4%
+  z-index: 10
+
+#thumbnails .render-container
+  display: inline-block
+  position: relative
+  overflow: hidden
+  width: 9.6%
+  height: 0
+  padding-bottom: 9.6%
+  margin: 0 .2%
+  opacity: .75
+
+#thumbnails .render-container canvas
+  width: 200%
+  transform: translateX(-25%) translateY(-25%)
+
+#thumbnails .active
+  transform: scale(1.1)
+  opacity: 1

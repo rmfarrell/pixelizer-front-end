@@ -1,16 +1,19 @@
 <template lang="pug">
   #app
     #overlay
+      p {{currentFrame}} / {{frameCount}}
       canvas#input-canvas(:width="width", :height="height", style="display:none")
       input(type="file" accept="image/*" @change="fileUploaded($event)")
       form#controls
         div
           label Width:
-          input(type="number", v-model="width" @change="updateInput()")
+          input(type="number", v-model="width", @change="updateWidth($event)")
           p Height: {{height}}
           p {{orientation}}
 
       form#algorithm-selector
+        p: a(@click="addFrame()") +++++++New Frame+++++++
+        p: a(@click="nextFrame()")  ->-->-->Next Frame-->-->-->
         ul#primary
           li
             input(type="radio" v-model="renderAlgorithm" value="squares")
@@ -35,14 +38,16 @@
               @change="emitInputUpdated"
             )
 
-    #rendered-container
-      canvas.rendered(v-for="r in frameCount")
+    #thumbnails
+      render(v-for="r in frameCount", :index="r")
+
+    #stage
+      render(v-for="r in frameCount", :index="r", v-show="r === currentFrame")
 
     pixel-field(
       :render-algorithm="renderAlgorithm",
       :image-data="imageData",
-      :options="secondaryOptions",
-      :px-density="pxDensity"
+      :options="secondaryOptions"
     )
     div
 </template>
@@ -50,6 +55,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import pixelField from './components/PixelField'
+  import render from './components/render.vue'
 
   export default {
     name: 'app',
@@ -57,10 +63,8 @@
       return {
         renderAlgorithm: 'squares',
         ctx: null,
-        pxDensity: 100,
         img: new window.Image(),
         imageData: [],
-        frameCount: 1,
         secondaryOptions: {
           unitSize: 1,
           funkiness: 0
@@ -70,11 +74,6 @@
     mounted () {
       // Set the ctx on the input canvas
       this.ctx = document.getElementById('input-canvas').getContext('2d')
-
-      // listen for canvas drawn and update the rendered cavnas with a snapshot
-      this.$bus.$on('canvas-drawn', (idx, context) => {
-        this.copyContext(idx, context)
-      })
     },
     watch: {
       renderAlgorithm () {
@@ -82,20 +81,24 @@
       }
     },
     methods: {
-      copyContext (idx, src) {
-        let w = 200
-        let canvas = this.findRenderedCanvas(idx)
-        let newCtx = canvas.getContext('2d')
-        canvas.width = w
-        canvas.height = w * this.$store.ratio
-        newCtx.drawImage(src, 0, 0)
+      updateWidth (val) {
+        this.$store.commit('setWidth', val.target.value)
+        this.updateInput()
+        // this.emitInputUpdated()
       },
-      findRenderedCanvas (idx) {
-        return this.$el.querySelector('#rendered-container').children[idx - 1]
+      goToFrame (frame) {
+        console.log('gotoframe')
+        this.$store.commit('goToFrame', frame)
+      },
+      addFrame () {
+        this.$store.commit('addFrame')
+      },
+      nextFrame () {
+        this.$store.commit('goToFrame', this.currentFrame + 1)
       },
       fileUploaded (val) {
         this.img.onload = () => {
-          this.setRatio()
+          this.setDimensions()
           this.updateInput()
         }
         this.img.src = window.URL.createObjectURL(val.target.files[0])
@@ -105,7 +108,7 @@
         this.$nextTick(this.sample)
         this.$nextTick(() => this.$bus.$emit('input-updated'))
       },
-      setRatio () {
+      setDimensions () {
         this.$store.commit(
           'setRatio',
           this.img.naturalHeight / this.img.naturalWidth
@@ -137,11 +140,14 @@
         'height',
         'width',
         'ratio',
-        'orientation'
+        'orientation',
+        'frameCount',
+        'currentFrame'
       ])
     },
     components: {
-      pixelField
+      pixelField,
+      render
     }
   }
 </script>
