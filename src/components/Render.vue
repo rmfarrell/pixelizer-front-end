@@ -4,8 +4,8 @@
   @click="goToFrame(index)"
 )
   canvas.render(
-    :width="renderWidth",
-    :height="renderHeight"
+    :width="width",
+    :height="height"
   )
 </template>
 
@@ -23,12 +23,18 @@ export default {
   mounted () {
     this.$bus.$on('canvas-drawn', (src) => {
       if (this.isCurrent()) {
-        this.copyContext(src)
+        this.setDimensions()
+        this.$nextTick(() => {
+          this.copyContext(src)
+        })
       }
     })
   },
   data () {
-    return {}
+    return {
+      height: 0,
+      width: 0
+    }
   },
   methods: {
     isCurrent () {
@@ -36,6 +42,10 @@ export default {
     },
     goToFrame (frame) {
       this.$store.commit('goToFrame', frame)
+    },
+    setDimensions () {
+      this.height = this.renderHeight
+      this.width = this.renderWidth
     },
     copyContext (src) {
       let canvas = this.$el.querySelector('canvas')

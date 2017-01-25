@@ -66,7 +66,6 @@
         ctx: null,
         img: new window.Image(),
         imageData: [],
-        isNextButton: true,
         secondaryOptions: {
           unitSize: 1,
           funkiness: 0
@@ -142,10 +141,11 @@
         'orientation',
         'frameCount',
         'currentFrame'
-      ])
-    },
-    isNextButton () {
-      return (this.frameCount < this.Globals.maxFrames)
+      ]),
+      isNextButton () {
+        return (this.frameCount < window.Globals.maxFrames &&
+          this.frameCount > 0)
+      }
     },
     components: {
       pixelField,
