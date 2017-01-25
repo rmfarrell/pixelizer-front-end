@@ -4,6 +4,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App'
 import storeData from './store'
+import './assets/styles/form-reset.sss'
+import './assets/styles/forms.sss'
 import './assets/styles/master.sss'
 
 // Globals
