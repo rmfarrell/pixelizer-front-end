@@ -15,13 +15,9 @@ export default {
       type: Array,
       required: true
     },
-    options: {
-      type: Object,
-      required: true,
-      default: {
-        unitSize: 1,
-        funkiness: 0
-      }
+    funkiness: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -48,10 +44,10 @@ export default {
       }
     },
     getFunky () {
-      if (this.options.funkiness === 0) {
+      if (this.funkiness === 0) {
         return 0
       }
-      let r = this.pxDensity * (this.options.funkiness * 0.01)
+      let r = this.pxDensity * (this.funkiness * 0.01)
       let x = Math.floor(Math.random() * r) + 1
       let p = (Math.floor(Math.random() * 2) === 0) ? 1 : -1
       return x * p
@@ -90,7 +86,7 @@ export default {
       c.arc(
         x + (this.pxDensity / 2) + this.getFunky(),
         y + (this.pxDensity / 2) + this.getFunky(),
-        this.pxDensity / 2 + Math.abs(this.getFunky()) * this.options.unitSize,
+        this.pxDensity / 2 + Math.abs(this.getFunky()),
         0,
         2 * Math.PI, false
       )

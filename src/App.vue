@@ -43,16 +43,10 @@
             input(type="radio" v-model="renderAlgorithm" value="triangles")
             label Triangles
         ul#secondary
-          li(v-if="['circles'].includes(renderAlgorithm)")
+          li
             input(
               type="number",
-              v-model="secondaryOptions.unitSize",
-              @change="emitInputUpdated"
-            )
-          li(v-if="['triangles', 'circles', 'squares'].includes(renderAlgorithm)")
-            input(
-              type="number",
-              v-model="secondaryOptions.funkiness",
+              v-model="funkiness",
               @change="emitInputUpdated"
             )
 
@@ -62,7 +56,7 @@
     pixel-field(
       :render-algorithm="renderAlgorithm",
       :image-data="imageData",
-      :options="secondaryOptions"
+      :funkiness="funkiness"
     )
     div
 </template>
@@ -84,10 +78,7 @@
         width: this.$store.getters.width,
         isImage: false,
         maxFrames: window.Globals.maxFrames,
-        secondaryOptions: {
-          unitSize: 1,
-          funkiness: 0
-        },
+        funkiness: 0,
         isForceThumbnails: true
       }
     },
