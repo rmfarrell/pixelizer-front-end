@@ -75,24 +75,30 @@
         ctx: null,
         img: new window.Image(),
         imageData: [],
-        width: this.$store.getters.width,
+        width: this.$store.getters.options.width || 0,
         isImage: false,
         maxFrames: window.Globals.maxFrames,
-        funkiness: 0,
+        funkiness: this.$store.getters.options.funkiness || 0,
         isForceThumbnails: true
       }
     },
     mounted () {
+      console.log(this.$store.getters.options.funkiness)
       // Set the ctx on the input canvas
       this.ctx = document.getElementById('input-canvas').getContext('2d')
     },
     watch: {
       renderAlgorithm () {
-        this.$bus.$emit('input-updated')
+        this.$nextTick(this.updateInput)
       },
       width () {
         this.$store.commit('setWidth', this.width)
         this.$nextTick(this.updateInput)
+      },
+      currentFrame () {
+        this.renderAlgorithm = this.options.renderAlgorithm
+        this.width = this.options.width
+        this.funkiness = this.options.funkiness
       }
     },
     methods: {
@@ -120,9 +126,18 @@
         this.isImage = true
       },
       updateInput () {
+        this.setOptions()
         this.$nextTick(this.placeImage)
         this.$nextTick(this.sample)
         this.$nextTick(() => this.$bus.$emit('input-updated'))
+      },
+      setOptions () {
+        console.log('set options called')
+        this.$store.commit('setOptions', {
+          width: this.width,
+          funkiness: this.funkiness,
+          renderAlgorithm: this.renderAlgorithm
+        })
       },
       setDimensions () {
         this.$store.commit(
@@ -157,7 +172,8 @@
         'ratio',
         'orientation',
         'frameCount',
-        'currentFrame'
+        'currentFrame',
+        'options'
       ]),
       isNextButton () {
         return (this.frameCount < this.maxFrames &&

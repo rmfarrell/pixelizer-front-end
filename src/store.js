@@ -8,7 +8,12 @@ const Store = {
     renderWidth: 0,
     frameCount: 1,
     currentFrame: 1,
-    orientation: 'landscape'
+    orientation: 'landscape',
+    options: [{}, {
+      width: 60,
+      funkiness: 0,
+      renderAlgorithm: 'squares'
+    }]
   },
   mutations: {
     setRatio (state, ratio) {
@@ -30,11 +35,17 @@ const Store = {
     },
     goToFrame (state, frameNum) {
       state.currentFrame = (frameNum <= state.frameCount) ? frameNum : 1
+    },
+    setOptions (state, options) {
+      state.options[state.currentFrame] = options
     }
   },
   getters: {
     height: state => {
       return state.height
+    },
+    options: state => {
+      return state.options[state.currentFrame]
     },
     width: state => {
       return state.width
