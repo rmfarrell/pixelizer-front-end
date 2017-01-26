@@ -21,6 +21,7 @@
         @change="fileUploaded($event)"
       )
     #overlay
+      slider(v-model="width", :lazy="true", setValue="setWidth", ref="widthSlider")
       p {{currentFrame}} / {{frameCount}}
       canvas#input-canvas(:width="width", :height="height", style="display:none")
       form#controls
@@ -70,6 +71,7 @@
   import { mapGetters } from 'vuex'
   import pixelField from './components/PixelField'
   import render from './components/render.vue'
+  import slider from './components/Slider.vue'
 
   export default {
     name: 'app',
@@ -79,6 +81,7 @@
         ctx: null,
         img: new window.Image(),
         imageData: [],
+        width: this.$store.getters.width,
         isImage: false,
         maxFrames: window.Globals.maxFrames,
         secondaryOptions: {
@@ -95,9 +98,16 @@
     watch: {
       renderAlgorithm () {
         this.$bus.$emit('input-updated')
+      },
+      width () {
+        this.$store.commit('setWidth', this.width)
+        this.$nextTick(this.updateInput)
       }
     },
     methods: {
+      setWidth () {
+        console.log('called')
+      },
       createFrame () {
         this.$store.commit('addFrame')
         this.goToFrame(this.frameCount)
@@ -153,7 +163,6 @@
     computed: {
       ...mapGetters([
         'height',
-        'width',
         'ratio',
         'orientation',
         'frameCount',
@@ -166,7 +175,8 @@
     },
     components: {
       pixelField,
-      render
+      render,
+      slider
     }
   }
 </script>
