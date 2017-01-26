@@ -1,9 +1,28 @@
 <template lang="pug">
   #app
+    #thumbnails(
+      v-show="isImage",
+      :class="isForceThumbnails ? 'force-open' : '' "
+      @mouseleave="isForceThumbnails = false"
+    )
+      render(v-for="r in frameCount", :index="r")
+      a.new-frame.big-button(v-if="isNextButton", @click="createFrame()")
+        .label
+          strong &plus;
+          small Add Frame
+          small {{frameCount + 1}}/{{maxFrames}}
+
+    label.upload-button.big-button(v-if="!isImage")
+      strong &blk14;
+      small Select image
+      input(
+        type="file",
+        accept="image/*",
+        @change="fileUploaded($event)"
+      )
     #overlay
       p {{currentFrame}} / {{frameCount}}
       canvas#input-canvas(:width="width", :height="height", style="display:none")
-      input(type="file" accept="image/*" @change="fileUploaded($event)")
       form#controls
         div
           label Width:
@@ -36,13 +55,7 @@
               @change="emitInputUpdated"
             )
 
-    #thumbnails
-      a: render(v-for="r in frameCount", :index="r")
-      a(v-if="isNextButton", @click="createFrame()")
-        em +
-        | New Frame
-
-    #stage
+    #stage(v-show="isImage")
       render(v-for="r in frameCount", :index="r", v-show="r === currentFrame")
 
     pixel-field(
@@ -66,10 +79,13 @@
         ctx: null,
         img: new window.Image(),
         imageData: [],
+        isImage: false,
+        maxFrames: window.Globals.maxFrames,
         secondaryOptions: {
           unitSize: 1,
           funkiness: 0
-        }
+        },
+        isForceThumbnails: true
       }
     },
     mounted () {
@@ -84,7 +100,7 @@
     methods: {
       createFrame () {
         this.$store.commit('addFrame')
-        this.goToFrame(this.currentFrame + 1)
+        this.goToFrame(this.frameCount)
         this.updateInput()
       },
       updateWidth (val) {
@@ -100,6 +116,7 @@
           this.updateInput()
         }
         this.img.src = window.URL.createObjectURL(val.target.files[0])
+        this.isImage = true
       },
       updateInput () {
         this.$nextTick(this.placeImage)
@@ -143,8 +160,8 @@
         'currentFrame'
       ]),
       isNextButton () {
-        return (this.frameCount < window.Globals.maxFrames &&
-          this.frameCount > 0)
+        return (this.frameCount < this.maxFrames &&
+          (this.frameCount > 0 && this.isImage))
       }
     },
     components: {
