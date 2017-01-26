@@ -1,6 +1,10 @@
 <template lang="pug">
   #app
-    #thumbnails(v-show="isImage")
+    #thumbnails(
+      v-show="isImage",
+      :class="isForceThumbnails ? 'force-open' : '' "
+      @mouseleave="isForceThumbnails = false"
+    )
       render(v-for="r in frameCount", :index="r")
       a.new-frame.big-button(v-if="isNextButton", @click="createFrame()")
         .label
@@ -51,7 +55,7 @@
               @change="emitInputUpdated"
             )
 
-    #stage
+    #stage(v-show="isImage")
       render(v-for="r in frameCount", :index="r", v-show="r === currentFrame")
 
     pixel-field(
@@ -80,7 +84,8 @@
         secondaryOptions: {
           unitSize: 1,
           funkiness: 0
-        }
+        },
+        isForceThumbnails: true
       }
     },
     mounted () {
