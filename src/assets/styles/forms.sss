@@ -13,7 +13,6 @@
   display: block
   line-height: 1em
   font-size: .6em
-  display: inline-block
   text-transform: uppercase
   margin: 0
 
@@ -28,8 +27,9 @@
   border: 3px dotted rgba(255,255,255,1)
   display: inline-block
   position: absolute
-  padding: 0 0 .2em
   width: 9.4%
+  padding-bottom: 9.4%
+  height: 0
   margin: 0 0 0 .8%
   vertical-align: top
   font-size: 2.5em
@@ -45,9 +45,26 @@
 .new-frame:hover
   opacity: 1
 
+.new-frame .label
+  position: absolute
+  left: 50%
+  top: 50%
+  width: 100%
+  transform: translateX(-50%) translateY(-50%)
+
+@media (max-width: 1120px)
+  .new-frame
+    font-size: 2em
+
+@media (max-width: 900px)
+  .new-frame
+    font-size: 1.5em
+
+
 // ============================ Upload button ============================
 
 .upload-button
+  overflow: hidden
   position: absolute
   left: 50%
   top: 50%
@@ -56,7 +73,7 @@
   z-index: 20
   width: 5.5em
   font-size: 4em
-  padding: 4% 0 2%
+  padding: 5% 0 3%
 
 .upload-button [type=file]
   cursor: inherit

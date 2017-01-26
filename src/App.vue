@@ -3,9 +3,10 @@
     #thumbnails(v-show="isImage")
       render(v-for="r in frameCount", :index="r")
       a.new-frame.big-button(v-if="isNextButton", @click="createFrame()")
-        strong &plus;
-        small Add Frame
-        small {{frameCount + 1}}/{{maxFrames}}
+        .label
+          strong &plus;
+          small Add Frame
+          small {{frameCount + 1}}/{{maxFrames}}
 
     label.upload-button.big-button(v-if="!isImage")
       strong &blk14;
@@ -94,7 +95,7 @@
     methods: {
       createFrame () {
         this.$store.commit('addFrame')
-        this.goToFrame(this.currentFrame + 1)
+        this.goToFrame(this.frameCount)
         this.updateInput()
       },
       updateWidth (val) {
