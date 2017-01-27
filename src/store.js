@@ -22,7 +22,6 @@ const Store = {
       state.height = Math.round(state.width * state.ratio)
       state.renderHeight = state.height * state.pxDensity
       state.renderWidth = state.width * state.pxDensity
-      console.log(state.height)
     },
     setWidth (state, width) {
       state.width = width

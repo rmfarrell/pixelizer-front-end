@@ -232,50 +232,39 @@
 
 </style>
 
-<template>
+<template lang="pug">
 
-<div ref="wrap" :class="['vue-slider-wrap', flowDirection, disabledClass]" v-show="show" :style="wrapStyles" @click="wrapClick">
-    <div ref="elem" class="vue-slider" :style="[elemStyles, bgStyle]">
-        <template v-if="isMoblie">
-            <template v-if="isRange">
-                <div ref="dot0" :class="[tooltipStatus, 'vue-slider-dot']" :style="[sliderStyle, dotStyles]" @touchstart="moveStart(0)">
-                    <span :class="tooltipClass" :style="tooltipStyle">{{ formatter ? formatting(val[0]) : val[0] }}</span>
-                </div>
-                <div ref="dot1" :class="[tooltipStatus, 'vue-slider-dot']" :style="[sliderStyle, dotStyles]" @touchstart="moveStart(1)">
-                    <span :class="tooltipClass" :style="tooltipStyle">{{ formatter ? formatting(val[1]) : val[1] }}</span>
-                </div>
-            </template>
-            <template v-else>
-                <div ref="dot" :class="[tooltipStatus, 'vue-slider-dot']" :style="[sliderStyle, dotStyles]" @touchstart="moveStart">
-                    <span :class="tooltipClass" :style="tooltipStyle">{{ formatter ? formatting(val) : val}}</span>
-                </div>
-            </template>
-        </template>
-        <template v-else>
-            <template v-if="isRange">
-                <div ref="dot0" :class="[tooltipStatus, 'vue-slider-dot']" :style="[sliderStyle, dotStyles]" @mousedown="moveStart(0)">
-                    <span :class="tooltipClass" :style="tooltipStyle">{{ formatter ? formatting(val[0]) : val[0] }}</span>
-                </div>
-                <div ref="dot1" :class="[tooltipStatus, 'vue-slider-dot']" :style="[sliderStyle, dotStyles]" @mousedown="moveStart(1)">
-                    <span :class="tooltipClass" :style="tooltipStyle">{{ formatter ? formatting(val[1]) : val[1] }}</span>
-                </div>
-            </template>
-            <template v-else>
-                <div ref="dot" :class="[tooltipStatus, 'vue-slider-dot']" :style="[sliderStyle, dotStyles]" @mousedown="moveStart">
-                    <span :class="tooltipClass" :style="tooltipStyle">{{ formatter ? formatting(val) : val}}</span>
-                </div>
-            </template>
-        </template>
-        <template v-if="piecewise">
-            <ul class="vue-slider-piecewise">
-                <li v-for="position in piecewiseDotPos" :style="[piecewiseStyles, piecewiseStyle, position]"></li>
-            </ul>
-        </template>
-        <div ref="process" class="vue-slider-process" :style="processStyle"></div>
-    </div>
-</div>
+div(
+  ref='wrap',
+  :class="['vue-slider-wrap', flowDirection, disabledClass]",
+  v-show='show',
+  :style='wrapStyles',
+  @click='wrapClick'
+  )
+  .vue-slider(ref='elem', :style='[elemStyles, bgStyle]')
+    template(v-if='isMoblie')
+      template(v-if='isRange')
+        div(ref='dot0', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @touchstart='moveStart(0)')
+          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val[0]) : val[0] }}
+        div(ref='dot1', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @touchstart='moveStart(1)')
+          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val[1]) : val[1] }}
+      template(v-else)
+        div(ref='dot', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @touchstart='moveStart')
+          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val) : val}}
+    template(v-else='')
+      template(v-if='isRange')
+        div(ref='dot0', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @mousedown='moveStart(0)')
+          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val[0]) : val[0] }}
+        div(ref='dot1', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @mousedown='moveStart(1)')
+          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val[1]) : val[1] }}
+      template(v-else='')
+        div(ref='dot', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @mousedown='moveStart')
+          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val) : val}}
+    template(v-if='piecewise')
+      ul.vue-slider-piecewise
+        li(v-for='position in piecewiseDotPos', :style='[piecewiseStyles, piecewiseStyle, position]')
+    .vue-slider-process(ref='process', :style='processStyle')
 </template>
-
 <script>
 export default {
   data () {

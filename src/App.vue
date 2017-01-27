@@ -46,8 +46,7 @@
           li
             input(
               type="number",
-              v-model="funkiness",
-              @change="emitInputUpdated"
+              v-model="funkiness"
             )
 
     #stage(v-show="isImage")
@@ -83,8 +82,6 @@
       }
     },
     mounted () {
-      console.log(this.$store.getters.options.funkiness)
-      // Set the ctx on the input canvas
       this.ctx = document.getElementById('input-canvas').getContext('2d')
     },
     watch: {
@@ -95,6 +92,9 @@
         this.$store.commit('setWidth', this.width)
         this.$nextTick(this.updateInput)
       },
+      funkiness () {
+        this.$nextTick(this.updateInput)
+      },
       currentFrame () {
         this.renderAlgorithm = this.options.renderAlgorithm
         this.width = this.options.width
@@ -102,9 +102,6 @@
       }
     },
     methods: {
-      setWidth () {
-        console.log('called')
-      },
       createFrame () {
         this.$store.commit('addFrame')
         this.goToFrame(this.frameCount)
@@ -132,7 +129,6 @@
         this.$nextTick(() => this.$bus.$emit('input-updated'))
       },
       setOptions () {
-        console.log('set options called')
         this.$store.commit('setOptions', {
           width: this.width,
           funkiness: this.funkiness,
@@ -147,9 +143,6 @@
       },
       placeImage () {
         this.ctx.drawImage(this.img, 0, 0, this.width, this.height)
-      },
-      emitInputUpdated () {
-        this.$bus.$emit('input-updated')
       },
       sample () {
         if (this.width === 0 || this.height === 0) {
