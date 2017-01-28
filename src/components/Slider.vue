@@ -75,7 +75,6 @@
     position: absolute;
     border-radius: 50%;
     background-color: #fff;
-    box-shadow: 0.5px 0.5px 2px 1px rgba(0, 0, 0, 0.32);
     transition: all 0s;
     cursor: pointer;
     z-index: 3;
@@ -244,22 +243,21 @@ div(
   .vue-slider(ref='elem', :style='[elemStyles, bgStyle]')
     template(v-if='isMoblie')
       template(v-if='isRange')
-        div(ref='dot0', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @touchstart='moveStart(0)')
+        div(ref='dot0', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle]', @touchstart='moveStart(0)')
           span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val[0]) : val[0] }}
-        div(ref='dot1', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @touchstart='moveStart(1)')
+        div(ref='dot1', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle]', @touchstart='moveStart(1)')
           span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val[1]) : val[1] }}
       template(v-else)
-        div(ref='dot', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @touchstart='moveStart')
-          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val) : val}}
+        div(ref='dot', @touchstart='moveStart')
     template(v-else='')
       template(v-if='isRange')
-        div(ref='dot0', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @mousedown='moveStart(0)')
-          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val[0]) : val[0] }}
-        div(ref='dot1', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @mousedown='moveStart(1)')
-          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val[1]) : val[1] }}
+        div(ref='dot0', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle]', @mousedown='moveStart(0)')
+          slot(name="tooltip-min")
+        div(ref='dot1', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle]', @mousedown='moveStart(1)')
+          slot(name="tooltip-max")
       template(v-else='')
-        div(ref='dot', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle, dotStyles]', @mousedown='moveStart')
-          span(:class='tooltipClass', :style='tooltipStyle') {{ formatter ? formatting(val) : val}}
+        .dot(ref='dot', :class="[tooltipStatus, 'vue-slider-dot']", :style='[sliderStyle]', @mousedown='moveStart')
+          slot(name="tooltip-single")
     template(v-if='piecewise')
       ul.vue-slider-piecewise
         li(v-for='position in piecewiseDotPos', :style='[piecewiseStyles, piecewiseStyle, position]')
@@ -453,17 +451,6 @@ export default {
         height: '100%'
       } : {
         height: `${this.height}px`
-      }
-    },
-    dotStyles () {
-      return this.direction === 'vertical' ? {
-        width: `${this.dotSize}px`,
-        height: `${this.dotSize}px`,
-        left: `${(-(this.dotSize - this.width) / 2)}px`
-      } : {
-        width: `${this.dotSize}px`,
-        height: `${this.dotSize}px`,
-        top: `${(-(this.dotSize - this.height) / 2)}px`
       }
     },
     piecewiseStyles () {

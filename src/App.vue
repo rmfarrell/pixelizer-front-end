@@ -22,6 +22,7 @@
       )
     #overlay
       slider(v-model="width", :lazy="true", setValue="setWidth", ref="widthSlider")
+        div(slot="tooltip-single") {{width}}&times;{{height}}
       p {{currentFrame}} / {{frameCount}}
       canvas#input-canvas(:width="width", :height="height", style="display:none")
       form#controls
