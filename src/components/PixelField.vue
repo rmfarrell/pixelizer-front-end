@@ -43,42 +43,46 @@ export default {
         this[this.renderAlgorithm](x, y, rgb[0], rgb[1], rgb[2], i)
       }
     },
-    getFunky () {
+    getFunky (modifier = 1) {
       if (this.funkiness === 0) {
         return 0
       }
-      let r = this.pxDensity * (this.funkiness * 0.01)
+      let f = Math.pow(this.funkiness, 1.5)
+      let r = this.pxDensity * (f * 0.01)
       let x = Math.floor(Math.random() * r) + 1
       let p = (Math.floor(Math.random() * 2) === 0) ? 1 : -1
-      return x * p
+      return x * p * modifier
     },
     triangles (x, y, red, green, blue, iteration) {
       let c = this.ctx
-      let p = this.pxDensity
+      let p = this.pxDensity * (1 + (this.funkiness * 0.05))
+      let m = 1
       c.fillStyle = `rgb(${red}, ${green}, ${blue})`
       c.beginPath()
       if (iteration % 2 === 0) {
-        c.moveTo(x + p / 2 + this.getFunky(), y + this.getFunky())
-        c.lineTo(x + (p * 1.5) + this.getFunky(), y + p + this.getFunky())
-        c.lineTo(x - (p * 0.5) + this.getFunky(), y + p + this.getFunky())
-        c.closePath()
+        c.moveTo(x + p / 2 + this.getFunky(m), y + this.getFunky(m))
+        c.lineTo(x + (p * 1.5) + this.getFunky(m), y + p + this.getFunky(m))
+        c.lineTo(x - (p * 0.5) + this.getFunky(m), y + p + this.getFunky(m))
       } else {
-        c.moveTo(x - (p * 0.5) + this.getFunky(), y + this.getFunky())
-        c.lineTo(x + (p * 1.5) + this.getFunky(), y + this.getFunky())
-        c.lineTo(x + p / 2 + this.getFunky(), y + p + this.getFunky())
-        c.closePath()
+        c.moveTo(x - (p * 0.5) + this.getFunky(m), y + this.getFunky(m))
+        c.lineTo(x + (p * 1.5) + this.getFunky(m), y + this.getFunky(m))
+        c.lineTo(x + p / 2 + this.getFunky(m), y + p + this.getFunky(m))
       }
+      c.closePath()
       c.fill()
     },
     squares (x, y, red, green, blue, iteration) {
       let c = this.ctx
+      let m = 0.2
+      let pxd = this.pxDensity * 2
       c.fillStyle = `rgb(${red}, ${green}, ${blue})`
-      c.fillRect(
-        x + this.getFunky(),
-        y + this.getFunky(),
-        this.pxDensity + this.getFunky(),
-        this.pxDensity + this.getFunky()
-      )
+      c.beginPath()
+      c.moveTo(x + this.getFunky(m), y + this.getFunky(m))
+      c.lineTo(x + pxd + this.getFunky(m), y + this.getFunky(m))
+      c.lineTo(x + pxd + this.getFunky(m), y + pxd + this.getFunky(m))
+      c.lineTo(x + this.getFunky(m), y + pxd + this.getFunky(m))
+      c.closePath()
+      c.fill()
     },
     circles (x, y, red, green, blue, iteration) {
       let c = this.ctx
@@ -91,6 +95,29 @@ export default {
         2 * Math.PI, false
       )
       c.fillStyle = `rgb(${red}, ${green}, ${blue})`
+      c.fill()
+    },
+    hexagons (x, y, red, green, blue, iteration) {
+      let c = this.ctx
+      let p = this.pxDensity
+      c.fillStyle = `rgb(${red}, ${green}, ${blue})`
+      c.beginPath()
+      if (iteration % 2 === 0) {
+        c.moveTo(x - p / 3, y + p)
+        c.lineTo(x, y + p / 2)
+        c.lineTo(x + p - p / 3, y + p / 2)
+        c.lineTo(x + p, y + p)
+        c.lineTo(x + p - p / 3, y + p + p / 2)
+        c.lineTo(x, y + p + p / 2)
+      } else {
+        c.moveTo(x - p / 3, y + p / 2)
+        c.lineTo(x, y)
+        c.lineTo(x + p - p / 3, y)
+        c.lineTo(x + p, y + p / 2)
+        c.lineTo(x + p - p / 3, y + p)
+        c.lineTo(x, y + p)
+      }
+      c.closePath()
       c.fill()
     },
     reset () {

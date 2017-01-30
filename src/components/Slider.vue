@@ -21,8 +21,6 @@
 .vue-slider-wrap .vue-slider {
     position: relative;
     display: block;
-    border-radius: 15px;
-    background-color: #ccc;
 }
 
 .vue-slider-wrap .vue-slider::after {
@@ -37,8 +35,6 @@
 
 .vue-slider-process {
     position: absolute;
-    border-radius: 15px;
-    background-color: #3498db;
     transition: all 0s;
     z-index: 1;
 }
@@ -94,113 +90,6 @@
 
 .vue-slider-vertical-reverse .vue-slider-dot {
     top: 0;
-}
-
-.vue-slider-tooltip {
-    display: none;
-    font-size: 14px;
-    white-space: nowrap;
-    position: absolute;
-    padding: 2px 5px;
-    min-width: 20px;
-    text-align: center;
-    color: #fff;
-    border-radius: 5px;
-    border: 1px solid #3498db;
-    background-color: #3498db;
-    z-index: 9;
-}
-
-.vue-slider-tooltip.vue-slider-tooltip-top {
-    top: -9px;
-    left: 50%;
-    transform: translate(-50%, -100%);
-}
-
-.vue-slider-tooltip.vue-slider-tooltip-bottom {
-    bottom: -9px;
-    left: 50%;
-    transform: translate(-50%, 100%);
-}
-
-.vue-slider-tooltip.vue-slider-tooltip-left {
-    top: 50%;
-    left: -9px;
-    transform: translate(-100%, -50%);
-}
-
-.vue-slider-tooltip.vue-slider-tooltip-right {
-    top: 50%;
-    right: -9px;
-    transform: translate(100%, -50%);
-}
-
-.vue-slider-tooltip.vue-slider-tooltip-top::before {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-width: 5px;
-    border-width: 6px\0;
-    border-style: solid;
-    border-color: transparent;
-    border-top-color: inherit;
-    transform: translate(-50%, 0);
-}
-
-.vue-slider-tooltip.vue-slider-tooltip-bottom::before {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-width: 5px;
-    border-width: 6px\0;
-    border-style: solid;
-    border-color: transparent;
-    border-bottom-color: inherit;
-    transform: translate(-50%, 0);
-}
-
-.vue-slider-tooltip.vue-slider-tooltip-left::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    right: -10px;
-    width: 0;
-    height: 0;
-    border-width: 5px;
-    border-width: 6px\0;
-    border-style: solid;
-    border-color: transparent;
-    border-left-color: inherit;
-    transform: translate(0, -50%);
-}
-
-.vue-slider-tooltip.vue-slider-tooltip-right::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -10px;
-    width: 0;
-    height: 0;
-    border-width: 5px;
-    border-width: 6px\0;
-    border-style: solid;
-    border-color: transparent;
-    border-right-color: inherit;
-    transform: translate(0, -50%);
-}
-
-.vue-slider-dot.vue-slider-hover:hover .vue-slider-tooltip {
-    display: block;
-}
-
-.vue-slider-dot.vue-slider-always .vue-slider-tooltip {
-    display: block!important;
 }
 
 .vue-slider-piecewise {
@@ -280,7 +169,7 @@ export default {
     },
     height: {
       type: [Number, String],
-      default: 6
+      default: 8
     },
     data: {
       type: Array,

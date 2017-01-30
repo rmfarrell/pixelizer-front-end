@@ -21,34 +21,38 @@
         @change="fileUploaded($event)"
       )
     #overlay
-      slider(v-model="width", :lazy="true", setValue="setWidth", ref="widthSlider")
+      slider(
+        v-model="width",
+        :lazy="true",
+        setValue="setWidth",
+        ref="widthSlider",
+        :max="maxResolution",
+        :min="minResolution",
+        interval="2"
+      )
         div(slot="tooltip-single") {{width}}&times;{{height}}
-      p {{currentFrame}} / {{frameCount}}
+      slider(
+        v-model="funkiness",
+        :lazy="true",
+        ref="funkinessSlider",
+        :max="maxFunkiness",
+      )
+        div(slot="tooltip-single") {{funkiness}}
       canvas#input-canvas(:width="width", :height="height", style="display:none")
-      form#controls
-        div
-          label Width:
-          input(type="number", v-model="width", @change="updateWidth($event)")
-          p Height: {{height}}
-          p {{orientation}}
-
       form#algorithm-selector
         ul#primary
-          li
-            input(type="radio" v-model="renderAlgorithm" value="squares")
-            label Squares
           li
             input(type="radio" v-model="renderAlgorithm" value="circles")
             label Circles
           li
             input(type="radio" v-model="renderAlgorithm" value="triangles")
             label Triangles
-        ul#secondary
           li
-            input(
-              type="number",
-              v-model="funkiness"
-            )
+            input(type="radio" v-model="renderAlgorithm" value="squares")
+            label Squares
+          li
+            input(type="radio" v-model="renderAlgorithm" value="hexagons")
+            label Hexagons
 
     #stage(v-show="isImage")
       render(v-for="r in frameCount", :index="r", v-show="r === currentFrame")
@@ -79,7 +83,10 @@
         isImage: false,
         maxFrames: window.Globals.maxFrames,
         funkiness: this.$store.getters.options.funkiness || 0,
-        isForceThumbnails: true
+        isForceThumbnails: true,
+        maxResolution: 100,
+        minResolution: 20,
+        maxFunkiness: 50
       }
     },
     mounted () {
