@@ -7,6 +7,7 @@ import storeData from './store'
 import './assets/styles/form-reset.sss'
 import './assets/styles/forms.sss'
 import './assets/styles/master.sss'
+import './assets/styles/slider.sss'
 
 // Globals
 window.Globals = {

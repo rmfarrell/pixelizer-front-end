@@ -21,39 +21,38 @@
         @change="fileUploaded($event)"
       )
     #overlay
-      p {{currentFrame}} / {{frameCount}}
+      slider(
+        v-model="width",
+        :lazy="true",
+        setValue="setWidth",
+        ref="widthSlider",
+        :max="maxResolution",
+        :min="minResolution",
+        interval="2"
+      )
+        div(slot="tooltip-single") {{width}}&times;{{height}}
+      slider(
+        v-model="funkiness",
+        :lazy="true",
+        ref="funkinessSlider",
+        :max="maxFunkiness",
+      )
+        div(slot="tooltip-single") {{funkiness}}
       canvas#input-canvas(:width="width", :height="height", style="display:none")
-      form#controls
-        div
-          label Width:
-          input(type="number", v-model="width", @change="updateWidth($event)")
-          p Height: {{height}}
-          p {{orientation}}
-
       form#algorithm-selector
         ul#primary
-          li
-            input(type="radio" v-model="renderAlgorithm" value="squares")
-            label Squares
           li
             input(type="radio" v-model="renderAlgorithm" value="circles")
             label Circles
           li
             input(type="radio" v-model="renderAlgorithm" value="triangles")
             label Triangles
-        ul#secondary
-          li(v-if="['circles'].includes(renderAlgorithm)")
-            input(
-              type="number",
-              v-model="secondaryOptions.unitSize",
-              @change="emitInputUpdated"
-            )
-          li(v-if="['triangles', 'circles', 'squares'].includes(renderAlgorithm)")
-            input(
-              type="number",
-              v-model="secondaryOptions.funkiness",
-              @change="emitInputUpdated"
-            )
+          li
+            input(type="radio" v-model="renderAlgorithm" value="squares")
+            label Squares
+          li
+            input(type="radio" v-model="renderAlgorithm" value="hexagons")
+            label Hexagons
 
     #stage(v-show="isImage")
       render(v-for="r in frameCount", :index="r", v-show="r === currentFrame")
@@ -61,7 +60,7 @@
     pixel-field(
       :render-algorithm="renderAlgorithm",
       :image-data="imageData",
-      :options="secondaryOptions"
+      :funkiness="funkiness"
     )
     div
 </template>
@@ -70,6 +69,7 @@
   import { mapGetters } from 'vuex'
   import pixelField from './components/PixelField'
   import render from './components/render.vue'
+  import slider from './components/Slider.vue'
 
   export default {
     name: 'app',
@@ -79,22 +79,34 @@
         ctx: null,
         img: new window.Image(),
         imageData: [],
+        width: this.$store.getters.options.width || 0,
         isImage: false,
         maxFrames: window.Globals.maxFrames,
-        secondaryOptions: {
-          unitSize: 1,
-          funkiness: 0
-        },
-        isForceThumbnails: true
+        funkiness: this.$store.getters.options.funkiness || 0,
+        isForceThumbnails: true,
+        maxResolution: 100,
+        minResolution: 20,
+        maxFunkiness: 50
       }
     },
     mounted () {
-      // Set the ctx on the input canvas
       this.ctx = document.getElementById('input-canvas').getContext('2d')
     },
     watch: {
       renderAlgorithm () {
-        this.$bus.$emit('input-updated')
+        this.$nextTick(this.updateInput)
+      },
+      width () {
+        this.$store.commit('setWidth', this.width)
+        this.$nextTick(this.updateInput)
+      },
+      funkiness () {
+        this.$nextTick(this.updateInput)
+      },
+      currentFrame () {
+        this.renderAlgorithm = this.options.renderAlgorithm
+        this.width = this.options.width
+        this.funkiness = this.options.funkiness
       }
     },
     methods: {
@@ -119,9 +131,17 @@
         this.isImage = true
       },
       updateInput () {
+        this.setOptions()
         this.$nextTick(this.placeImage)
         this.$nextTick(this.sample)
         this.$nextTick(() => this.$bus.$emit('input-updated'))
+      },
+      setOptions () {
+        this.$store.commit('setOptions', {
+          width: this.width,
+          funkiness: this.funkiness,
+          renderAlgorithm: this.renderAlgorithm
+        })
       },
       setDimensions () {
         this.$store.commit(
@@ -131,9 +151,6 @@
       },
       placeImage () {
         this.ctx.drawImage(this.img, 0, 0, this.width, this.height)
-      },
-      emitInputUpdated () {
-        this.$bus.$emit('input-updated')
       },
       sample () {
         if (this.width === 0 || this.height === 0) {
@@ -153,11 +170,11 @@
     computed: {
       ...mapGetters([
         'height',
-        'width',
         'ratio',
         'orientation',
         'frameCount',
-        'currentFrame'
+        'currentFrame',
+        'options'
       ]),
       isNextButton () {
         return (this.frameCount < this.maxFrames &&
@@ -166,7 +183,8 @@
     },
     components: {
       pixelField,
-      render
+      render,
+      slider
     }
   }
 </script>
