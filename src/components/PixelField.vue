@@ -18,6 +18,10 @@ export default {
     funkiness: {
       type: Number,
       default: 0
+    },
+    blendMode: {
+      type: String,
+      default: 'none'
     }
   },
   data () {
@@ -33,6 +37,7 @@ export default {
       let y = 0
       let row = 0
       let rgb = []
+      this.ctx.globalCompositeOperation = this.blendMode
       for (var i = 0; i < this.imageData.length; i++) {
         if (i % this.width === 0) {
           row++
@@ -57,7 +62,6 @@ export default {
       let c = this.ctx
       let p = this.pxDensity * (1 + (this.funkiness * 0.05))
       let m = 0.1
-      c.globalCompositeOperation = 'overlay'
       c.fillStyle = `rgba(${red}, ${green}, ${blue}, 1)`
       c.beginPath()
       if (iteration % 2 === 0) {
@@ -74,7 +78,6 @@ export default {
     },
     halftone (x, y, red, green, blue, iteration) {
       let c = this.ctx
-      c.globalCompositeOperation = 'screen'
       let inks = {
         red: {
           color: 'rgba(225,0,0,1)',
@@ -121,7 +124,6 @@ export default {
     },
     circles (x, y, red, green, blue, iteration) {
       let c = this.ctx
-      c.globalCompositeOperation = 'screen'
       c.beginPath()
       c.arc(
         x + (this.pxDensity / 2) + this.getFunky(),

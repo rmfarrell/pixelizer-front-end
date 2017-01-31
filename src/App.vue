@@ -20,6 +20,9 @@
               :class="renderAlgorithm === r ? 'active' : ''"
             ) {{r}}
 
+        select(v-model="blendMode")
+          option(v-for="bm in blendModeOptions", :value="bm") {{bm}}
+
       .settings.column
         p.label Resolution:
         slider(
@@ -60,7 +63,8 @@
     pixel-field(
       :render-algorithm="renderAlgorithm",
       :image-data="imageData",
-      :funkiness="funkiness"
+      :funkiness="funkiness",
+      :blend-mode="blendMode"
     )
     div
 </template>
@@ -82,7 +86,16 @@
           'halftone',
           'hexagons'
         ],
+        blendModeOptions: [
+          'none',
+          'multiply',
+          'screen',
+          'overlay',
+          'lighten',
+          'luminosity'
+        ],
         renderAlgorithm: 'squares',
+        blendMode: 'none',
         ctx: null,
         img: new window.Image(),
         imageData: [],
@@ -103,6 +116,9 @@
       renderAlgorithm () {
         this.$nextTick(this.updateInput)
       },
+      blendMode () {
+        this.$nextTick(this.updateInput)
+      },
       width () {
         this.$store.commit('setWidth', this.width)
         this.$nextTick(this.updateInput)
@@ -111,9 +127,7 @@
         this.$nextTick(this.updateInput)
       },
       currentFrame () {
-        this.renderAlgorithm = this.options.renderAlgorithm
-        this.width = this.options.width
-        this.funkiness = this.options.funkiness
+        this.getOptions()
       }
     },
     methods: {
@@ -121,6 +135,12 @@
         this.$store.commit('addFrame')
         this.goToFrame(this.frameCount)
         this.updateInput()
+      },
+      getOptions () {
+        this.renderAlgorithm = this.options.renderAlgorithm
+        this.width = this.options.width
+        this.funkiness = this.options.funkiness
+        this.blendMode = this.options.blendMode
       },
       updateWidth (val) {
         this.$store.commit('setWidth', val.target.value)
@@ -150,7 +170,8 @@
         this.$store.commit('setOptions', {
           width: this.width,
           funkiness: this.funkiness,
-          renderAlgorithm: this.renderAlgorithm
+          renderAlgorithm: this.renderAlgorithm,
+          blendMode: this.blendMode
         })
       },
       setDimensions () {
