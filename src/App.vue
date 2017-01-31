@@ -20,6 +20,7 @@
               :class="renderAlgorithm === r ? 'active' : ''"
             ) {{r}}
 
+        p.label Blend Mode:
         select(v-model="blendMode")
           option(v-for="bm in blendModeOptions", :value="bm") {{bm}}
 
