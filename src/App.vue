@@ -12,24 +12,13 @@
             small Add Frame
             small {{frameCount + 1}}/{{maxFrames}}
 
-      .column
-        form#algorithm-selector
-          ul#primary
-            li
-              input(type="radio" v-model="renderAlgorithm" value="circles")
-              label Circles
-            li
-              input(type="radio" v-model="renderAlgorithm" value="triangles")
-              label Triangles
-            li
-              input(type="radio" v-model="renderAlgorithm" value="squares")
-              label Squares
-            li
-              input(type="radio" v-model="renderAlgorithm" value="hexagons")
-              label Hexagons
-            li
-              input(type="radio" v-model="renderAlgorithm" value="multiChannel")
-              label Multi-Channel
+      .column.algorithm-selector
+        ul
+          li(v-for="r in renderOptions")
+            a(
+              @click="setAlgorithm(r)",
+              :class="renderAlgorithm === r ? 'active' : ''"
+            ) {{r}}
 
       .settings.column
         p.label Resolution:
@@ -86,6 +75,13 @@
     name: 'app',
     data () {
       return {
+        renderOptions: [
+          'squares',
+          'circles',
+          'triangles',
+          'halftone',
+          'hexagons'
+        ],
         renderAlgorithm: 'squares',
         ctx: null,
         img: new window.Image(),
@@ -146,6 +142,9 @@
         this.$nextTick(this.placeImage)
         this.$nextTick(this.sample)
         this.$nextTick(() => this.$bus.$emit('input-updated'))
+      },
+      setAlgorithm (ra) {
+        this.renderAlgorithm = ra
       },
       setOptions () {
         this.$store.commit('setOptions', {

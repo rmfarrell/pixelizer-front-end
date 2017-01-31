@@ -72,7 +72,7 @@ export default {
       c.closePath()
       c.fill()
     },
-    multiChannel (x, y, red, green, blue, iteration) {
+    halftone (x, y, red, green, blue, iteration) {
       let c = this.ctx
       c.globalCompositeOperation = 'screen'
       let inks = {
