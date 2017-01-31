@@ -28,7 +28,7 @@
         ref="widthSlider",
         :max="maxResolution",
         :min="minResolution",
-        interval="2"
+        :interval="2"
       )
         div(slot="tooltip-single") {{width}}&times;{{height}}
       slider(
@@ -53,6 +53,9 @@
           li
             input(type="radio" v-model="renderAlgorithm" value="hexagons")
             label Hexagons
+          li
+            input(type="radio" v-model="renderAlgorithm" value="multiChannel")
+            label Multi-Channel
 
     #stage(v-show="isImage")
       render(v-for="r in frameCount", :index="r", v-show="r === currentFrame")

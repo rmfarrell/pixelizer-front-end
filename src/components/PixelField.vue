@@ -71,6 +71,39 @@ export default {
       c.closePath()
       c.fill()
     },
+    multiChannel (x, y, red, green, blue, iteration) {
+      let c = this.ctx
+      let inks = {
+        red: {
+          color: 'rgba(231,47,23,0.8)',
+          offset: -20,
+          strength: red
+        },
+        green: {
+          color: 'rgba(52,231,23,0.5)',
+          offset: 10,
+          strength: green
+        },
+        blue: {
+          color: 'rgba(23,72,231,0.4)',
+          offset: 0,
+          strength: blue
+        }
+      }
+      for (var k in inks) {
+        c.fillStyle = inks[k].color
+        c.beginPath()
+        c.arc(
+          x + (this.pxDensity / 2) + inks[k].offset,
+          y + (this.pxDensity / 2) + inks[k].offset,
+          this.pxDensity / 2 * (inks[k].strength / 255),
+          0,
+          2 * Math.PI, false
+        )
+        c.closePath()
+        c.fill()
+      }
+    },
     squares (x, y, red, green, blue, iteration) {
       let c = this.ctx
       let m = 0.2
