@@ -57,7 +57,8 @@ export default {
       let c = this.ctx
       let p = this.pxDensity * (1 + (this.funkiness * 0.05))
       let m = 1
-      c.fillStyle = `rgb(${red}, ${green}, ${blue})`
+      c.globalCompositeOperation = 'overlay'
+      c.fillStyle = `rgba(${red}, ${green}, ${blue}, 1)`
       c.beginPath()
       if (iteration % 2 === 0) {
         c.moveTo(x + p / 2 + this.getFunky(m), y + this.getFunky(m))
@@ -73,19 +74,20 @@ export default {
     },
     multiChannel (x, y, red, green, blue, iteration) {
       let c = this.ctx
+      c.globalCompositeOperation = 'screen'
       let inks = {
         red: {
-          color: 'rgba(231,47,23,0.8)',
-          offset: -20,
+          color: 'rgba(225,0,0,1)',
+          offset: -(this.funkiness),
           strength: red
         },
         green: {
-          color: 'rgba(52,231,23,0.5)',
-          offset: 10,
+          color: 'rgba(0,225,0,1)',
+          offset: this.funkiness,
           strength: green
         },
         blue: {
-          color: 'rgba(23,72,231,0.4)',
+          color: 'rgba(0,0,225,1)',
           offset: 0,
           strength: blue
         }
@@ -119,6 +121,7 @@ export default {
     },
     circles (x, y, red, green, blue, iteration) {
       let c = this.ctx
+      c.globalCompositeOperation = 'screen'
       c.beginPath()
       c.arc(
         x + (this.pxDensity / 2) + this.getFunky(),
