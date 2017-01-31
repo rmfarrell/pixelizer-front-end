@@ -56,7 +56,7 @@ export default {
     triangles (x, y, red, green, blue, iteration) {
       let c = this.ctx
       let p = this.pxDensity * (1 + (this.funkiness * 0.05))
-      let m = 1
+      let m = 0.1
       c.globalCompositeOperation = 'overlay'
       c.fillStyle = `rgba(${red}, ${green}, ${blue}, 1)`
       c.beginPath()

@@ -12,16 +12,6 @@ body,html
 a
   cursor: pointer
 
-#overlay
-  position: fixed
-  z-index: 10
-  bottom: 0
-  font-size: 1.2em
-  // background-color: rgba(0,0,0,.5)
-  box-shadow: inset 0 1em 6em 0 rgba(0,0,0,0.5)
-  width: 100%
-
-
 // ============================ Canvases =============================
 
 .render-container
@@ -57,17 +47,17 @@ a
   top: 0
   width: auto
 
-#thumbnails
+#overlay
   position: fixed
   width: 100%
   background-color: rgba(0,0,0,.5)
-  transform: translate3d(0,-100%,0)
+  // transform: translate3d(0,-100%,0)
   transition: transform .3s .3s
   padding: 2em 0 .4%
   z-index: 10
   min-width: 800px
 
-#thumbnails:after
+#overlay:after
   content: ""
   height: 50%
   display: block
@@ -75,11 +65,11 @@ a
   width: 100%
   top: 100%
 
-#thumbnails:hover,
-#thumbnails.force-open
+#overlay:hover,
+#overlay.force-open
   transform: translate3d(0,0,0)
 
-#thumbnails .render-container
+#overlay .render-container
   display: inline-block
   position: relative
   overflow: hidden
@@ -88,7 +78,7 @@ a
   padding-bottom: 9.6%
   margin: 0 .2%
 
-#thumbnails .render-container:after
+#overlay .render-container:after
   content: ""
   display: block
   position: absolute
@@ -100,9 +90,15 @@ a
   background-color: white
   bottom: 0
 
-#thumbnails .render-container canvas
+#overlay .render-container canvas
   width: 200%
   transform: translateX(-25%) translateY(-25%)
 
-#thumbnails .active:after
+#overlay .active:after
   transform: scaleX(1)
+
+#overlay .column
+  vertical-align: top
+  display: inline-block
+  border: 1px solid red
+  width: 30%

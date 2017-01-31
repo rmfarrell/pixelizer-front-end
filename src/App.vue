@@ -1,16 +1,59 @@
 <template lang="pug">
   #app
-    #thumbnails(
-      v-show="isImage",
-      :class="isForceThumbnails ? 'force-open' : '' "
+    #overlay(
+      :class="isForceThumbnails ? 'force-open' : '' ",
       @mouseleave="isForceThumbnails = false"
     )
-      render(v-for="r in frameCount", :index="r")
-      a.new-frame.big-button(v-if="isNextButton", @click="createFrame()")
-        .label
-          strong &plus;
-          small Add Frame
-          small {{frameCount + 1}}/{{maxFrames}}
+      .renders(v-show="isImage")
+        render(v-for="r in frameCount", :index="r")
+        a.new-frame.big-button(v-if="isNextButton", @click="createFrame()")
+          .label
+            strong &plus;
+            small Add Frame
+            small {{frameCount + 1}}/{{maxFrames}}
+
+      .column
+        form#algorithm-selector
+          ul#primary
+            li
+              input(type="radio" v-model="renderAlgorithm" value="circles")
+              label Circles
+            li
+              input(type="radio" v-model="renderAlgorithm" value="triangles")
+              label Triangles
+            li
+              input(type="radio" v-model="renderAlgorithm" value="squares")
+              label Squares
+            li
+              input(type="radio" v-model="renderAlgorithm" value="hexagons")
+              label Hexagons
+            li
+              input(type="radio" v-model="renderAlgorithm" value="multiChannel")
+              label Multi-Channel
+
+      .settings.column
+        p.label Resolution:
+        slider(
+          v-model="width",
+          :lazy="true",
+          setValue="setWidth",
+          ref="widthSlider",
+          :max="maxResolution",
+          :min="minResolution",
+          :interval="2"
+        )
+          div(slot="tooltip-single") {{width}}&times;{{height}}
+        p.label Randomness:
+        slider(
+          v-model="funkiness",
+          :lazy="true",
+          ref="funkinessSlider",
+          :max="maxFunkiness",
+        )
+          div(slot="tooltip-single") {{funkiness}}
+
+      .column
+        p third column
 
     label.upload-button.big-button(v-if="!isImage")
       strong &blk14;
@@ -20,43 +63,8 @@
         accept="image/*",
         @change="fileUploaded($event)"
       )
-    #overlay
-      slider(
-        v-model="width",
-        :lazy="true",
-        setValue="setWidth",
-        ref="widthSlider",
-        :max="maxResolution",
-        :min="minResolution",
-        :interval="2"
-      )
-        div(slot="tooltip-single") {{width}}&times;{{height}}
-      slider(
-        v-model="funkiness",
-        :lazy="true",
-        ref="funkinessSlider",
-        :max="maxFunkiness",
-      )
-        div(slot="tooltip-single") {{funkiness}}
-      canvas#input-canvas(:width="width", :height="height", style="display:none")
-      form#algorithm-selector
-        ul#primary
-          li
-            input(type="radio" v-model="renderAlgorithm" value="circles")
-            label Circles
-          li
-            input(type="radio" v-model="renderAlgorithm" value="triangles")
-            label Triangles
-          li
-            input(type="radio" v-model="renderAlgorithm" value="squares")
-            label Squares
-          li
-            input(type="radio" v-model="renderAlgorithm" value="hexagons")
-            label Hexagons
-          li
-            input(type="radio" v-model="renderAlgorithm" value="multiChannel")
-            label Multi-Channel
 
+    canvas#input-canvas(:width="width", :height="height", style="display:none")
     #stage(v-show="isImage")
       render(v-for="r in frameCount", :index="r", v-show="r === currentFrame")
 
