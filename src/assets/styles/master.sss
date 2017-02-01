@@ -51,7 +51,7 @@ a
   position: fixed
   width: 100%
   background-color: rgba(0,0,0,.5)
-  // transform: translate3d(0,-100%,0)
+  transform: translate3d(0,-100%,0)
   transition: transform .3s .3s
   padding: 2em 0 .4%
   z-index: 10
@@ -59,7 +59,7 @@ a
 
 #overlay:after
   content: ""
-  height: 50%
+  height: 5em
   display: block
   position: absolute
   width: 100%
@@ -100,8 +100,25 @@ a
 #overlay .column
   vertical-align: top
   display: inline-block
-  width: 30%
   padding: 0 1%
+  width: 30%
+
+#overlay .column.left
+  width: 30%
+
+#overlay .column.middle
+  width: 46%
+
+#overlay .column.right
+  width: 20%
+
+#overlay h2
+  font-size: 1em
+
+#overlay .disabled
+  pointer-events: none
+  opacity: 0.2
+
 
 // ========================== Settings ===========================
 
@@ -135,3 +152,29 @@ a
 
 .algorithm-selector .label
   display: inline-block
+
+
+// ========================== Animation Preview ===========================
+
+.playButton
+  display: block
+  border: 1px solid white
+  font-size: 3em
+  width: 1em
+  height: 1em
+  line-height: 1.5em
+  text-align: center
+  border-radius: 50%
+
+.playButton:after
+  content: "\025B8"
+  position: relative
+  top: -0.3em
+
+.playButton.playing:after
+  font-size: 0.8em
+  top: -0.4em
+
+
+.playButton.playing:after
+  content: "\025FC"

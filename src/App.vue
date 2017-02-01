@@ -12,7 +12,7 @@
             small Add Frame
             small {{frameCount + 1}}/{{maxFrames}}
 
-      .column.algorithm-selector
+      .column.left.algorithm-selector
         ul
           li(v-for="r in renderOptions")
             a(
@@ -20,11 +20,11 @@
               :class="renderAlgorithm === r ? 'active' : ''"
             ) {{r}}
 
-        p.label Blend Mode:
+        p.label Blend mode:
         select(v-model="blendMode")
           option(v-for="bm in blendModeOptions", :value="bm") {{bm}}
 
-      .settings.column
+      .settings.column.middle
         p.label Resolution:
         slider(
           v-model="width",
@@ -36,7 +36,7 @@
           :interval="2"
         )
           div(slot="tooltip-single") {{width}}&times;{{height}}
-        p.label Randomness:
+        p.label Funkiness:
         slider(
           v-model="funkiness",
           :lazy="true",
@@ -45,8 +45,22 @@
         )
           div(slot="tooltip-single") {{funkiness}}
 
-      .column
-        p third column
+      .column.right(:class="frameCount > 1 ? '' : 'disabled'")
+        h2 Animation
+        a.playButton(
+          @click="togglePlay()",
+          :class="isPlaying ? 'playing' : 'stopped'"
+        )
+        p.label Animation timing (seconds):
+        slider(
+          v-model="delay",
+          :lazy="true",
+          ref="funkinessSlider",
+          :min="minDelay",
+          :max="maxDelay",
+          :interval="10"
+        )
+          div(slot="tooltip-single") {{delay / 1000}}
 
     label.upload-button.big-button(v-if="!isImage")
       strong &blk14;
@@ -95,6 +109,11 @@
           'lighten',
           'luminosity'
         ],
+        isPlaying: false,
+        delay: 100,
+        maxDelay: 500,
+        minDelay: 20,
+        animationInterval: null,
         renderAlgorithm: 'squares',
         blendMode: 'none',
         ctx: null,
@@ -129,6 +148,15 @@
       },
       currentFrame () {
         this.getOptions()
+      },
+      isPlaying () {
+        if (this.isPlaying === true) {
+          this.animationInterval = setInterval(() => {
+            this.goToFrame(this.getNextFrame())
+          }, this.delay)
+        } else {
+          window.clearInterval(this.animationInterval)
+        }
       }
     },
     methods: {
@@ -136,6 +164,9 @@
         this.$store.commit('addFrame')
         this.goToFrame(this.frameCount)
         this.updateInput()
+      },
+      togglePlay () {
+        this.isPlaying = !this.isPlaying
       },
       getOptions () {
         this.renderAlgorithm = this.options.renderAlgorithm
@@ -149,6 +180,10 @@
       },
       goToFrame (frame) {
         this.$store.commit('goToFrame', frame)
+      },
+      getNextFrame () {
+        return (this.currentFrame >= this.frameCount)
+          ? 1 : this.currentFrame + 1
       },
       fileUploaded (val) {
         this.img.onload = () => {
