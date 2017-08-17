@@ -1,16 +1,66 @@
 <template lang="pug">
   #app
-    #thumbnails(
-      v-show="isImage",
-      :class="isForceThumbnails ? 'force-open' : '' "
+    #overlay(
+      :class="isForceThumbnails ? 'force-open' : '' ",
       @mouseleave="isForceThumbnails = false"
     )
-      render(v-for="r in frameCount", :index="r")
-      a.new-frame.big-button(v-if="isNextButton", @click="createFrame()")
-        .label
-          strong &plus;
-          small Add Frame
-          small {{frameCount + 1}}/{{maxFrames}}
+      .renders(v-show="isImage")
+        render(v-for="r in frameCount", :index="r")
+        a.new-frame.big-button(v-if="isNextButton", @click="createFrame()")
+          .label
+            strong &plus;
+            small Add Frame
+            small {{frameCount + 1}}/{{maxFrames}}
+
+      .column.left.algorithm-selector
+        ul
+          li(v-for="r in renderOptions")
+            a(
+              @click="setAlgorithm(r)",
+              :class="renderAlgorithm === r ? 'active' : ''"
+            ) {{r}}
+
+        p.label Blend mode:
+        select(v-model="blendMode")
+          option(v-for="bm in blendModeOptions", :value="bm") {{bm}}
+
+      .settings.column.middle
+        p.label Resolution:
+        slider(
+          v-model="width",
+          :lazy="true",
+          setValue="setWidth",
+          ref="widthSlider",
+          :max="maxResolution",
+          :min="minResolution",
+          :interval="2"
+        )
+          div(slot="tooltip-single") {{width}}&times;{{height}}
+        p.label Funkiness:
+        slider(
+          v-model="funkiness",
+          :lazy="true",
+          ref="funkinessSlider",
+          :max="maxFunkiness",
+        )
+          div(slot="tooltip-single") {{funkiness}}
+
+      .column.right(:class="frameCount > 1 ? '' : 'disabled'")
+        h2 Animation
+        a.playButton(
+          @click="togglePlay()",
+          :class="isPlaying ? 'playing' : 'stopped'"
+        )
+        p.label Animation timing (seconds):
+        slider(
+          v-model="delay",
+          :lazy="true",
+          ref="funkinessSlider",
+          :min="minDelay",
+          :max="maxDelay",
+          :interval="10"
+        )
+          div(slot="tooltip-single") {{delay / 1000}}
 
     label.upload-button.big-button(v-if="!isImage")
       strong &blk14;
@@ -20,47 +70,16 @@
         accept="image/*",
         @change="fileUploaded($event)"
       )
-    #overlay
-      slider(
-        v-model="width",
-        :lazy="true",
-        setValue="setWidth",
-        ref="widthSlider",
-        :max="maxResolution",
-        :min="minResolution",
-        interval="2"
-      )
-        div(slot="tooltip-single") {{width}}&times;{{height}}
-      slider(
-        v-model="funkiness",
-        :lazy="true",
-        ref="funkinessSlider",
-        :max="maxFunkiness",
-      )
-        div(slot="tooltip-single") {{funkiness}}
-      canvas#input-canvas(:width="width", :height="height", style="display:none")
-      form#algorithm-selector
-        ul#primary
-          li
-            input(type="radio" v-model="renderAlgorithm" value="circles")
-            label Circles
-          li
-            input(type="radio" v-model="renderAlgorithm" value="triangles")
-            label Triangles
-          li
-            input(type="radio" v-model="renderAlgorithm" value="squares")
-            label Squares
-          li
-            input(type="radio" v-model="renderAlgorithm" value="hexagons")
-            label Hexagons
 
+    canvas#input-canvas(:width="width", :height="height", style="display:none")
     #stage(v-show="isImage")
       render(v-for="r in frameCount", :index="r", v-show="r === currentFrame")
 
     pixel-field(
       :render-algorithm="renderAlgorithm",
       :image-data="imageData",
-      :funkiness="funkiness"
+      :funkiness="funkiness",
+      :blend-mode="blendMode"
     )
     div
 </template>
@@ -75,7 +94,28 @@
     name: 'app',
     data () {
       return {
+        renderOptions: [
+          'squares',
+          'circles',
+          'triangles',
+          'halftone',
+          'hexagons'
+        ],
+        blendModeOptions: [
+          'none',
+          'multiply',
+          'screen',
+          'overlay',
+          'lighten',
+          'luminosity'
+        ],
+        isPlaying: false,
+        delay: 100,
+        maxDelay: 500,
+        minDelay: 20,
+        animationInterval: null,
         renderAlgorithm: 'squares',
+        blendMode: 'none',
         ctx: null,
         img: new window.Image(),
         imageData: [],
@@ -96,6 +136,9 @@
       renderAlgorithm () {
         this.$nextTick(this.updateInput)
       },
+      blendMode () {
+        this.$nextTick(this.updateInput)
+      },
       width () {
         this.$store.commit('setWidth', this.width)
         this.$nextTick(this.updateInput)
@@ -104,9 +147,16 @@
         this.$nextTick(this.updateInput)
       },
       currentFrame () {
-        this.renderAlgorithm = this.options.renderAlgorithm
-        this.width = this.options.width
-        this.funkiness = this.options.funkiness
+        this.getOptions()
+      },
+      isPlaying () {
+        if (this.isPlaying === true) {
+          this.animationInterval = setInterval(() => {
+            this.goToFrame(this.getNextFrame())
+          }, this.delay)
+        } else {
+          window.clearInterval(this.animationInterval)
+        }
       }
     },
     methods: {
@@ -115,12 +165,25 @@
         this.goToFrame(this.frameCount)
         this.updateInput()
       },
+      togglePlay () {
+        this.isPlaying = !this.isPlaying
+      },
+      getOptions () {
+        this.renderAlgorithm = this.options.renderAlgorithm
+        this.width = this.options.width
+        this.funkiness = this.options.funkiness
+        this.blendMode = this.options.blendMode
+      },
       updateWidth (val) {
         this.$store.commit('setWidth', val.target.value)
         this.updateInput()
       },
       goToFrame (frame) {
         this.$store.commit('goToFrame', frame)
+      },
+      getNextFrame () {
+        return (this.currentFrame >= this.frameCount)
+          ? 1 : this.currentFrame + 1
       },
       fileUploaded (val) {
         this.img.onload = () => {
@@ -136,11 +199,15 @@
         this.$nextTick(this.sample)
         this.$nextTick(() => this.$bus.$emit('input-updated'))
       },
+      setAlgorithm (ra) {
+        this.renderAlgorithm = ra
+      },
       setOptions () {
         this.$store.commit('setOptions', {
           width: this.width,
           funkiness: this.funkiness,
-          renderAlgorithm: this.renderAlgorithm
+          renderAlgorithm: this.renderAlgorithm,
+          blendMode: this.blendMode
         })
       },
       setDimensions () {

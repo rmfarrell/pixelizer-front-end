@@ -12,7 +12,8 @@ const Store = {
     options: [{}, {
       width: 60,
       funkiness: 0,
-      renderAlgorithm: 'squares'
+      renderAlgorithm: 'squares',
+      blendMode: 'none'
     }]
   },
   mutations: {

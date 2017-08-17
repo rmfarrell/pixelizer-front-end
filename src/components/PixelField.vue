@@ -18,6 +18,10 @@ export default {
     funkiness: {
       type: Number,
       default: 0
+    },
+    blendMode: {
+      type: String,
+      default: 'none'
     }
   },
   data () {
@@ -33,6 +37,7 @@ export default {
       let y = 0
       let row = 0
       let rgb = []
+      this.ctx.globalCompositeOperation = this.blendMode
       for (var i = 0; i < this.imageData.length; i++) {
         if (i % this.width === 0) {
           row++
@@ -56,8 +61,8 @@ export default {
     triangles (x, y, red, green, blue, iteration) {
       let c = this.ctx
       let p = this.pxDensity * (1 + (this.funkiness * 0.05))
-      let m = 1
-      c.fillStyle = `rgb(${red}, ${green}, ${blue})`
+      let m = 0.1
+      c.fillStyle = `rgba(${red}, ${green}, ${blue}, 1)`
       c.beginPath()
       if (iteration % 2 === 0) {
         c.moveTo(x + p / 2 + this.getFunky(m), y + this.getFunky(m))
@@ -70,6 +75,39 @@ export default {
       }
       c.closePath()
       c.fill()
+    },
+    halftone (x, y, red, green, blue, iteration) {
+      let c = this.ctx
+      let inks = {
+        red: {
+          color: 'rgba(225,0,0,1)',
+          offset: -(this.funkiness),
+          strength: red
+        },
+        green: {
+          color: 'rgba(0,225,0,1)',
+          offset: this.funkiness,
+          strength: green
+        },
+        blue: {
+          color: 'rgba(0,0,225,1)',
+          offset: 0,
+          strength: blue
+        }
+      }
+      for (var k in inks) {
+        c.fillStyle = inks[k].color
+        c.beginPath()
+        c.arc(
+          x + (this.pxDensity / 2) + inks[k].offset,
+          y + (this.pxDensity / 2) + inks[k].offset,
+          this.pxDensity / 2 * (inks[k].strength / 255),
+          0,
+          2 * Math.PI, false
+        )
+        c.closePath()
+        c.fill()
+      }
     },
     squares (x, y, red, green, blue, iteration) {
       let c = this.ctx

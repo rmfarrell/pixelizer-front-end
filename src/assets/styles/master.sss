@@ -12,16 +12,6 @@ body,html
 a
   cursor: pointer
 
-#overlay
-  position: fixed
-  z-index: 10
-  bottom: 0
-  font-size: 1.2em
-  // background-color: rgba(0,0,0,.5)
-  box-shadow: inset 0 1em 6em 0 rgba(0,0,0,0.5)
-  width: 100%
-
-
 // ============================ Canvases =============================
 
 .render-container
@@ -57,7 +47,7 @@ a
   top: 0
   width: auto
 
-#thumbnails
+#overlay
   position: fixed
   width: 100%
   background-color: rgba(0,0,0,.5)
@@ -67,19 +57,19 @@ a
   z-index: 10
   min-width: 800px
 
-#thumbnails:after
+#overlay:after
   content: ""
-  height: 50%
+  height: 5em
   display: block
   position: absolute
   width: 100%
   top: 100%
 
-#thumbnails:hover,
-#thumbnails.force-open
+#overlay:hover,
+#overlay.force-open
   transform: translate3d(0,0,0)
 
-#thumbnails .render-container
+#overlay .render-container
   display: inline-block
   position: relative
   overflow: hidden
@@ -88,7 +78,7 @@ a
   padding-bottom: 9.6%
   margin: 0 .2%
 
-#thumbnails .render-container:after
+#overlay .render-container:after
   content: ""
   display: block
   position: absolute
@@ -100,9 +90,91 @@ a
   background-color: white
   bottom: 0
 
-#thumbnails .render-container canvas
+#overlay .render-container canvas
   width: 200%
   transform: translateX(-25%) translateY(-25%)
 
-#thumbnails .active:after
+#overlay .active:after
   transform: scaleX(1)
+
+#overlay .column
+  vertical-align: top
+  display: inline-block
+  padding: 0 1%
+  width: 30%
+
+#overlay .column.left
+  width: 30%
+
+#overlay .column.middle
+  width: 46%
+
+#overlay .column.right
+  width: 20%
+
+#overlay h2
+  font-size: 1em
+
+#overlay .disabled
+  pointer-events: none
+  opacity: 0.2
+
+
+// ========================== Settings ===========================
+
+.settings .label
+  margin: 2em 0 .5em 1em
+
+.settings .label:first-child
+  margin-top: 1em
+
+
+// ========================== Algorithm Selector ===========================
+
+.algorithm-selector ul
+  margin: 0
+  padding: 0
+
+.algorithm-selector li
+  display: inline
+
+.algorithm-selector a
+  display: inline-block
+  width: 28%
+  border: 1px solid white
+  margin: 2% 5% 2% 0
+  text-align: center
+  line-height: 4em
+
+.algorithm-selector a.active
+  background-color: white
+  color: #222
+
+.algorithm-selector .label
+  display: inline-block
+
+
+// ========================== Animation Preview ===========================
+
+.playButton
+  display: block
+  border: 1px solid white
+  font-size: 3em
+  width: 1em
+  height: 1em
+  line-height: 1.5em
+  text-align: center
+  border-radius: 50%
+
+.playButton:after
+  content: "\025B8"
+  position: relative
+  top: -0.3em
+
+.playButton.playing:after
+  font-size: 0.8em
+  top: -0.4em
+
+
+.playButton.playing:after
+  content: "\025FC"
