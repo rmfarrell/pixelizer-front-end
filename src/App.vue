@@ -47,6 +47,7 @@
 
       .column.right(:class="frameCount > 1 ? '' : 'disabled'")
         h2 Animation
+        h1:  a.export(@click="exportGif()") __Export Gif__
         a.playButton(
           @click="togglePlay()",
           :class="isPlaying ? 'playing' : 'stopped'"
@@ -232,6 +233,18 @@
           counter++
         }
         this.imageData = out
+      },
+      exportGif () {
+        const renders = this.$el.querySelectorAll('#overlay canvas')
+        var gif = new window.GIF({
+          workers: 4,
+          quality: 10
+        })
+        for (let render of renders) {
+          gif.addFrame(render, {delay: 200})
+        }
+        gif.on('finished', blob => window.open(window.URL.createObjectURL(blob)))
+        gif.render()
       }
     },
     computed: {
