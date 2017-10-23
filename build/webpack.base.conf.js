@@ -49,8 +49,8 @@ module.exports = {
     ],
     loaders: [
       {
-        test:   /\.sss/,
-        loader: "style-loader!css-loader!postcss-loader?parser=sugarss"
+        test: /\.sss/,
+        loader: 'style-loader!css-loader!postcss-loader?parser=sugarss'
       },
       {
         test: /\.vue$/,
