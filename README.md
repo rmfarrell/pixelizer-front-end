@@ -1,4 +1,4 @@
-# pixelizr-app
+# Pixelizr
 
 Pure frontend for Generating Gif Mosaics
 
