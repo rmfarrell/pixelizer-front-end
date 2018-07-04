@@ -1,6 +1,8 @@
 # pixelizr-app
 
-> A Vue.js project
+Pure frontend for Generating Gif Mosaics
+
+Built with Vue/Canvas/HTML
 
 ## Build Setup
 
